@@ -2,11 +2,11 @@
 
 ### 更新
 
-#### 2024.5.27
+#### 2025.02.23
 
 ##### 新增
 
-- /pc路径，显示横屏图片，例如：[https://api.neix.in/random/pc](https://api.neix.in/random/pc)
+- /landscape路径，显示横屏图片，例如：[https://api.neix.in/random/landscape](https://api.neix.in/random/landscape)
 
 ![https://api.neix.in/random/pc](https://api.neix.in/random/pc)
 
@@ -41,18 +41,29 @@
 #### Docker
 
 ```yml
-version: '3.9'
 services:
-    random-api:
-        image: 'neixin/random-pic-api'
-        volumes:
-# 竖屏图片
-            - './portrait:/var/www/html/portrait'
-# 横屏图片
-            - './landscape:/var/www/html/landscape'
-        ports:
-            - '8080:80'
+  random-api:
+    image: 'neixin/random-pic-api'
+    volumes:
+      # 竖屏图片
+      - './portrait:/var/www/html/portrait'
+      # 横屏图片
+      - './landscape:/var/www/html/landscape'
+    ports:
+      - '8588:80'  # 保持原有端口映射
+
+  php-app:  # 新增 PHP 服务
+    build: .  # 使用当前目录下的 Dockerfile 构建镜像
+    container_name: php_app
+    volumes:
+      - './:/var/www/html'  # 挂载本地 PHP 项目目录（根据实际路径调整）
+    ports:
+      - '8586:80'  # PHP 内置服务器默认端口
+    depends_on:
+      - random-api  # 确保 random-api 先启动（可选）
 ```
+
+* **本地访问测试：<http://localhost:8588/index.php>**
 
 ### 图片处理
 
