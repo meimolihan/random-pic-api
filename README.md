@@ -162,3 +162,7 @@ server {
     }
 }
 ```
+
+### 感谢作者 [Nei-Xin](https://github.com/Nei-Xin/random-pic-api)
+
+我又做出了自己的修改
