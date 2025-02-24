@@ -1,0 +1,18 @@
+services:
+   random-api:
+      container_name: random-api
+      image: neixin/random-pic-api
+      volumes:
+         - ./portrait:/var/www/html/portrait # 竖屏图片
+         - ./landscape:/var/www/html/landscape # 横屏图片
+      ports:
+         - 8588:80
+   php_app:
+      build: .
+      container_name: php_app
+      volumes:
+         - ./:/var/www/html
+      ports:
+         - 8586:80
+      depends_on:
+         - random-api

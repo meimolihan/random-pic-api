@@ -3,8 +3,8 @@ FROM php:alpine
 
 # 将本地文件复制到容器中
 COPY index.php /var/www/html/
-COPY pc /var/www/html/pc
-COPY mobile /var/www/html/mobile
+COPY landscape /var/www/html/landscape
+COPY portrait /var/www/html/portrait
 
 # 暴露容器的 80 端口
 EXPOSE 80

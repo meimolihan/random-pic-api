@@ -38,9 +38,9 @@ def process_images(input_folder, output_folder_landscape, output_folder_portrait
                 print(f"Error processing {image_path}: {e}. Skipping this image.")
 
 # 指定输入和输出文件夹
-input_folder = "/root/photos"
-output_folder_landscape = "/root/landscape"
-output_folder_portrait = "/root/portrait"
+input_folder = "./photos"
+output_folder_landscape = "./landscape"
+output_folder_portrait = "./portrait"
 
 # 执行转换
 process_images(input_folder, output_folder_landscape, output_folder_portrait)

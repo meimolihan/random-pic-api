@@ -6,11 +6,11 @@
 
 ##### 新增
 
-- /landscape路径，显示横屏图片，例如：[https://api.neix.in/random/landscape](https://api.neix.in/random/landscape)
+- /pc路径，显示横屏图片，例如：[https://api.neix.in/random/pc](https://api.neix.in/random/pc)
 
 ![https://api.neix.in/random/pc](https://api.neix.in/random/pc)
 
-- /portrait，显示竖屏图片，例如：[https://api.neix.in/random/portrait](https://api.neix.in/random/portrait)
+- /mobile，显示竖屏图片，例如：[https://api.neix.in/random/mobile](https://api.neix.in/random/mobile)
 
 ![https://api.neix.in/random/mobile](https://api.neix.in/random/mobile)
 
@@ -42,25 +42,23 @@
 
 ```yml
 services:
-  random-api:
-    image: 'neixin/random-pic-api'
-    volumes:
-      # 竖屏图片
-      - './portrait:/var/www/html/portrait'
-      # 横屏图片
-      - './landscape:/var/www/html/landscape'
-    ports:
-      - '8588:80'  # 保持原有端口映射
-
-  php-app:  # 新增 PHP 服务
-    build: .  # 使用当前目录下的 Dockerfile 构建镜像
-    container_name: php_app
-    volumes:
-      - './:/var/www/html'  # 挂载本地 PHP 项目目录（根据实际路径调整）
-    ports:
-      - '8586:80'  # PHP 内置服务器默认端口
-    depends_on:
-      - random-api  # 确保 random-api 先启动（可选）
+   random-api:
+      container_name: random-api
+      image: neixin/random-pic-api
+      volumes:
+         - ./portrait:/var/www/html/portrait # 竖屏图片
+         - ./landscape:/var/www/html/landscape # 横屏图片
+      ports:
+         - 8588:80
+   php_app:
+      build: .
+      container_name: php_app
+      volumes:
+         - ./:/var/www/html
+      ports:
+         - 8586:80
+      depends_on:
+         - random-api
 ```
 
 * **本地访问测试：<http://localhost:8588/index.php>**
@@ -110,9 +108,9 @@ def process_images(input_folder, output_folder_landscape, output_folder_portrait
                 print(f"Error processing {image_path}: {e}. Skipping this image.")
 
 # 指定输入和输出文件夹
-input_folder = "/root/photos"
-output_folder_landscape = "/root/landscape"
-output_folder_portrait = "/root/portrait"
+input_folder = "./photos"
+output_folder_landscape = "./landscape"
+output_folder_portrait = "./portrait"
 
 # 执行转换
 process_images(input_folder, output_folder_landscape, output_folder_portrait)
