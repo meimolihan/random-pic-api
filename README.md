@@ -10,7 +10,7 @@
 
 ![https://api.neix.in/random/pc](https://api.neix.in/random/pc)
 
-- /mobile，显示竖屏图片，例如：[https://api.neix.in/random/mobile](https://api.neix.in/random/mobile)
+- /portrait，显示竖屏图片，例如：[https://api.neix.in/random/portrait](https://api.neix.in/random/portrait)
 
 ![https://api.neix.in/random/mobile](https://api.neix.in/random/mobile)
 
