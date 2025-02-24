@@ -1,5 +1,5 @@
 services:
-   random-api:
+   random-pic-api:
       container_name: random-pic-api
       image: neixin/random-pic-api
       volumes:
