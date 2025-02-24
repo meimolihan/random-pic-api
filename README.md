@@ -4,42 +4,36 @@
 
 #### 2025.02.23
 
-本地访问测试
-* 自适应随机壁纸：http://localhost:8588
-* 横屏随机壁纸：http://localhost:8588/pc
-* 竖屏随机壁纸：http://localhost:8588/mobile
-
 ### 特性
 
 - 图片随机展示
 - 设备适配：通过检测用户代理字符串，判断访问设备是手机还是电脑，并根据设备类型选择对应的图片文件夹路径。
 - 图片格式支持：web,jpg,jpeg,png,gif
 
-### 部署
+### 使用方法
 
-#### docker-compose.yml
-```yml
-services:
-   random-api:
-      container_name: random-api
-      image: neixin/random-pic-api
-      volumes:
-         - ./portrait:/var/www/html/portrait # 竖屏图片
-         - ./landscape:/var/www/html/landscape # 横屏图片
-      ports:
-         - 8588:80
-   php_app:
-      build: .
-      container_name: php_app
-      volumes:
-         - ./:/var/www/html
-      ports:
-         - 8586:80
-      depends_on:
-         - random-api
+1. 克隆本项目
+```bash
+git clone https://github.com/meimolihan/random-pic-api.git
 ```
 
-#### 使用docker镜像离线包
+2. 进入项目
+```bash
+cd random-pic-api
+```
+
+3. 运行容器
+```bash
+docker-compose up -d
+```
+
+4. 本地看效果
+* 自适应随机壁纸：http://localhost:8588
+* 横屏随机壁纸：http://localhost:8588/pc
+* 竖屏随机壁纸：http://localhost:8588/mobile
+
+
+### 使用docker镜像离线包
 
 * 下载 `neixin/random-pic-api` 离线包
 ```bash
