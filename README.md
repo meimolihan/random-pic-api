@@ -10,7 +10,7 @@
 
 ![https://api.neix.in/random/pc](https://api.neix.in/random/pc)
 
-- /mobile，显示竖屏图片，例如：[https://api.neix.in/random/mobile](https://api.neix.in/random/mobile)
+- /mobile路径，显示竖屏图片，例如：[https://api.neix.in/random/mobile](https://api.neix.in/random/mobile)
 
 ![https://api.neix.in/random/mobile](https://api.neix.in/random/mobile)
 
@@ -34,11 +34,7 @@
 
 ### 部署
 
-#### PHP
-
-直接丢到有PHP和Nginx的环境中就行
-
-#### Docker
+#### docker-compose.yml
 
 ```yml
 services:
@@ -120,11 +116,57 @@ process_images(input_folder, output_folder_landscape, output_folder_portrait)
 
 将横屏和竖屏的图片分开，并转化为webp格式，使用时注意修改文件路径
 
-### 赞助
-感谢 [YXVM](https://yxvm.com/) 对本项目的支持！
-### 最后
+* **目录结构**
 
-如果觉得还不错的话，可以点个star
+```
+.
+├── classify.py
+├── landscape # 整理出的横屏壁纸目录
+│   ├── test1.webp
+│   ├── test2.webp
+│   └── test3.webp
+├── photos # 未整理的图片目录
+│   ├── test1.jpg
+│   ├── test2.jpg
+│   ├── test3.jpg
+│   ├── test4.jpg
+│   ├── test5.jpg
+│   └── test6.jpg
+└── portrait # 整理出的竖屏壁纸目录
+    ├── test4.webp
+    ├── test5.webp
+    └── test6.webp
+```
 
-个人博客地址：[极客与乐趣](https://blog.gckjoy.com/)
+### 配置 nginx
+```nginx
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name api.example.com;
 
+    ssl_certificate /etc/nginx/keyfile/cert.pem;  
+    ssl_certificate_key /etc/nginx/keyfile/key.pem;  
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    location / {
+        proxy_pass http://localhost:8588; 
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host $http_host;
+        proxy_set_header Range $http_range;
+        proxy_set_header If-Range $http_if_range;
+        proxy_redirect off;
+        proxy_buffering on;
+        proxy_http_version 1.1;
+    }
+        charset utf-8;
+        error_page 404 500 502 503 504 /50x.html;
+        location = /50x.html {
+            root   /var/www/html;
+    }
+}
+```
