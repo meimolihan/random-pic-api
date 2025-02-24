@@ -4,27 +4,10 @@
 
 #### 2025.02.23
 
-##### 新增
-
-- /pc路径，显示横屏图片，例如：[https://api.neix.in/random/pc](https://api.neix.in/random/pc)
-
-![https://api.neix.in/random/pc](https://api.neix.in/random/pc)
-
-- /mobile路径，显示竖屏图片，例如：[https://api.neix.in/random/mobile](https://api.neix.in/random/mobile)
-
-![https://api.neix.in/random/mobile](https://api.neix.in/random/mobile)
-
-- 镜像大小减小了
-
-#### 简介
-
-随机图片 API 是一种允许开发者从一个图片库或者指定的目录中获取随机图片的接口。这种 API 通常用于网站、移动应用程序或其他软件中，以便动态地展示随机图片，例如用作背景图片、占位图、或者其他需要随机化内容的场景。
-
-### 在线体验
-
-[https://api.neix.in/random](https://api.zzii.de/random)
-
-![https://api.neix.in/random](https://api.neix.in/random)
+本地访问测试
+* 自适应随机壁纸：http://localhost:8588
+* 横屏随机壁纸：http://localhost:8588/pc
+* 竖屏随机壁纸：http://localhost:8588/mobile
 
 ### 特性
 
@@ -35,7 +18,6 @@
 ### 部署
 
 #### docker-compose.yml
-
 ```yml
 services:
    random-api:
@@ -57,7 +39,17 @@ services:
          - random-api
 ```
 
-* **本地访问测试：<http://localhost:8588/index.php>**
+#### 使用docker镜像离线包
+
+* 下载 `neixin/random-pic-api` 离线包
+```bash
+wget -c -O ~/random-pic-api-amd64.tar.gz https://github.com/meimolihan/DockerTarBuilder/releases/download/DockerTarBuilder-AMD64/neixin_random-pic-api-amd64.tar.gz
+```
+
+* 加载本地镜像
+```bash
+docker load -i ~/random-pic-api-amd64.tar.gz
+```
 
 ### 图片处理
 
