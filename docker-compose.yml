@@ -1,6 +1,6 @@
 services:
    random-api:
-      container_name: random-api
+      container_name: random-pic-api
       image: neixin/random-pic-api
       volumes:
          - ./portrait:/var/www/html/portrait # 竖屏图片
@@ -15,4 +15,4 @@ services:
       ports:
          - 8586:80
       depends_on:
-         - random-api
+         - random-pic-api
