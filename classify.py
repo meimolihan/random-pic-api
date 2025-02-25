@@ -26,7 +26,7 @@ def convert_to_webp(image_path, output_folder, max_pixels=178956970):
 # 遍历文件夹中的图片
 def process_images(input_folder, output_folder_landscape, output_folder_portrait):
     for filename in os.listdir(input_folder):
-        if filename.endswith(('.jpg', '.jpeg', '.png')):
+        if filename.endswith(('.jpg', '.JPG', '.jpeg', '.png', '.PNG')):
             image_path = os.path.join(input_folder, filename)
             orientation = get_image_orientation(image_path)
             try:
