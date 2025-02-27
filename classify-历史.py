@@ -16,7 +16,7 @@ def convert_to_webp(image_path, output_folder, max_pixels=178956970):
             if width * height > max_pixels:
                 print(f"Skipping {image_path} because it exceeds the size limit.")
                 return
-
+            
             # Save the image as WebP
             output_path = os.path.join(output_folder, os.path.splitext(os.path.basename(image_path))[0] + ".webp")
             img.save(output_path, "webp")
@@ -25,14 +25,8 @@ def convert_to_webp(image_path, output_folder, max_pixels=178956970):
 
 # 遍历文件夹中的图片
 def process_images(input_folder, output_folder_landscape, output_folder_portrait):
-    # 检查并创建输出文件夹
-    if not os.path.exists(output_folder_landscape):
-        os.makedirs(output_folder_landscape)
-    if not os.path.exists(output_folder_portrait):
-        os.makedirs(output_folder_portrait)
-
     for filename in os.listdir(input_folder):
-        if filename.endswith(('.jpg', '.JPG', '.jpeg', '.png', '.PNG', '.webp', '.WEBP')):
+        if filename.endswith(('.jpg', '.JPG', '.jpeg', '.png', '.PNG')):
             image_path = os.path.join(input_folder, filename)
             orientation = get_image_orientation(image_path)
             try:
