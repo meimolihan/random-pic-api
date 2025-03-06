@@ -1,18 +1,29 @@
 services:
-   random-pic-api:
-      container_name: random-pic-api
-      image: neixin/random-pic-api
-      volumes:
-         - ./portrait:/var/www/html/portrait # 竖屏图片
-         - ./landscape:/var/www/html/landscape # 横屏图片
-      ports:
-         - 8588:80
-   php_app:
-      build: .
-      container_name: php_app
-      volumes:
-         - ./:/var/www/html
-      ports:
-         - 8586:80
-      depends_on:
-         - random-pic-api
+  random-pic-api:
+    container_name: random-pic-api
+    image: neixin/random-pic-api
+    restart: always # 重启策略
+    volumes:
+      - ./portrait:/var/www/html/portrait # 竖屏图片
+      - ./landscape:/var/www/html/landscape # 横屏图片
+    ports:
+      - 8588:80
+    depends_on:
+      - php_app
+    networks:
+      - api_web
+
+  php_app:
+    build: php # php目录下找 Dockerfile 构建镜像
+    container_name: php_app
+    restart: always # 重启策略
+    volumes:
+      - ./:/var/www/html
+    expose:
+      - 80 # 不暴露公网，仅在内部网络使用
+    networks:
+      - api_web
+
+networks:
+  api_web:
+    driver: bridge # 这里可以指定网络驱动，bridge 是默认驱动
