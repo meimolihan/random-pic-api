@@ -14,7 +14,7 @@ services:
       - api_web
 
   php_app:
-    build: php # php目录下找 Dockerfile 构建镜像
+    build: . # 根目录下找 Dockerfile 构建镜像
     container_name: php_app
     restart: always # 重启策略
     volumes:
