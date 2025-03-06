@@ -62,11 +62,15 @@ docker load -i ~/random-pic-api-amd64.tar.gz
 
 ```
 .
-├── classify.py
+├── docker-compose.yml
+├── index.php # 网站默认首页
+├── classify.py # 整理壁纸
 ├── landscape # 整理出的横屏壁纸目录
 │   ├── test1.webp
 │   ├── test2.webp
 │   └── test3.webp
+├── php
+│   ├── Dockerfile # 构建 php 镜像
 ├── photos # 未整理的图片目录
 │   ├── test1.jpg
 │   ├── test2.jpg
