@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 :: 配置区
-set "default_prefix=2d"
+set "default_prefix=phone"
 
 :: 用户输入交互
 set /p "prefix=请输入文件名前缀（默认 %default_prefix%）："
