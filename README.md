@@ -55,6 +55,7 @@ docker load -i ~/random-pic-api-amd64.tar.gz
 执行命令：`python3 classify.py`  
 会将`photos`文件夹下的图片转换为webp格式  
 转换后的图片整理到：
+
 * 竖屏图片保存至：`portrait`  
 * 横屏图片保存至：`landscape`
 
@@ -65,12 +66,7 @@ docker load -i ~/random-pic-api-amd64.tar.gz
 ├── docker-compose.yml
 ├── Dockerfile # 构建 php 镜像
 ├── index.php # 网站默认首页
-│
 ├── classify.py # 整理壁纸
-├── landscape # 整理出的横屏壁纸目录
-│   ├── test1.webp
-│   ├── test2.webp
-│   └── test3.webp
 ├── photos # 未整理的图片目录
 │   ├── test1.jpg
 │   ├── test2.jpg
@@ -78,13 +74,50 @@ docker load -i ~/random-pic-api-amd64.tar.gz
 │   ├── test4.jpg
 │   ├── test5.jpg
 │   └── test6.jpg
+├── landscape # 整理出的横屏壁纸目录
+│   ├── AAA-webp图片phone排序.bat # 双击整理壁纸
+│   ├── phone-001.webp
+│   ├── phone-002.webp
+│   └── phone-003.webp
 └── portrait # 整理出的竖屏壁纸目录
-    ├── test4.webp
-    ├── test5.webp
-    └── test6.webp
+    ├── AAA-webp图片pc排序.bat # 双击整理壁纸
+    ├── pc-001.webp
+    ├── pc-002.webp
+    └── pc-003.webp
 ```
 
-### 配置 nginx
+## 修改整理出的壁纸名称
+
+### 一  、`Windows` 修改整理出的壁纸名称
+
+**1、`Windows` 整理 `landscape` 目录，pc壁纸**
+
+```bash
+AAA-webp图片pc排序.bat # 双击整理壁纸
+```
+
+**2、`Windows` 整理 `portrait` 目录，phone壁纸**
+
+```bash
+AAA-webp图片phone排序.bat # 双击整理壁纸
+```
+
+### 二  、`Fnos` 修改整理出的壁纸名称
+
+**1、`Fnos` 整理 `landscape` 目录，pc壁纸**
+
+```bash
+cd /vol1/1000/home/random-pic-api/landscape && \ bash <(curl -sL gitee.com/meimolihan/script/raw/master/sh/linux/rename_webp_pc.sh)
+```
+
+**2、`Fnos` 整理 `portrait` 目录，phone壁纸**
+
+```bash
+cd /vol1/1000/home/random-pic-api/portrait && \ bash <(curl -sL gitee.com/meimolihan/script/raw/master/sh/linux/rename_webp_phone.sh)
+```
+
+## 家宽配置 nginx
+
 ```nginx
 server {
     listen 443 ssl;
