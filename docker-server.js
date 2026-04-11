@@ -110,14 +110,16 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`🚀 Random Pic API running on http://0.0.0.0:${PORT}`);
+  // 支持通过环境变量配置对外访问地址
+  const publicHost = process.env.PUBLIC_HOST || `http://0.0.0.0:${PORT}`;
+  console.log(`🚀 Random Pic API running on ${publicHost}`);
   scanImages(LANDSCAPE_DIR);
   scanImages(PORTRAIT_DIR);
   console.log('');
   console.log('📡 端点：');
-  console.log('   /         — 自适应（自动识别手机/电脑）');
-  console.log('   /pc       — 随机横屏壁纸');
-  console.log('   /mobile   — 随机竖屏壁纸');
+  console.log(`   ${publicHost}/     — 自适应（自动识别手机/电脑）`);
+  console.log(`   ${publicHost}/pc   — 随机横屏壁纸`);
+  console.log(`   ${publicHost}/mobile — 随机竖屏壁纸`);
   console.log('   ?type=json — 返回 JSON 格式');
   console.log('');
   console.log('💡 新增图片后只需重启容器即可生效：docker restart random-pic-api');
