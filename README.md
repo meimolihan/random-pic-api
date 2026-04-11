@@ -135,7 +135,7 @@ python3 classify.py
 **第三步：构建并运行**
 
 ```bash
-# 构建镜像（会自动扫描图片并生成清单）
+# 构建镜像
 docker build -t random-pic-api .
 
 # 运行容器
@@ -160,7 +160,7 @@ curl -I http://localhost:8588/pc
 docker logs random-pic-api
 ```
 
-> 💡 重新构建镜像时如果图片有变化，需要重新 `docker build` 并 `docker-compose up -d --force-recreate`。
+> 💡 **无需 rebuild！** 新增或替换图片后，只需 `docker restart random-pic-api` 即可自动生效。
 
 #### Nginx 反向代理
 
@@ -213,8 +213,10 @@ server {
 
 ### Docker 部署
 
-1. **构建时**：Dockerfile 中运行 `npm run build` 生成 manifest
-2. **请求时**：Node.js HTTP 服务器从 manifest 中随机选择图片
+1. **启动时**：Node.js HTTP 服务器动态扫描 `public/` 目录下的所有图片
+2. **请求时**：每次请求随机从目录中选取一张图片
+3. **响应**：直接返回图片数据流
+4. **更新图片**：放入新图片后只需 `docker restart random-pic-api` 即可生效，**无需重新构建镜像**
 3. **响应**：直接返回图片数据流（无需 CDN 重定向）
 4. **缓存策略**：图片缓存 7 天
 
