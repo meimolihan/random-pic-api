@@ -1,0 +1,23 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/api/index" },
+    { "source": "/pc", "destination": "/api/pc" },
+    { "source": "/mobile", "destination": "/api/mobile" }
+  ],
+  "headers": [
+    {
+      "source": "/landscape/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=604800" },
+        { "key": "Content-Disposition", "value": "inline" }
+      ]
+    },
+    {
+      "source": "/portrait/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=604800" },
+        { "key": "Content-Disposition", "value": "inline" }
+      ]
+    }
+  ]
+}
