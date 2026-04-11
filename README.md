@@ -71,6 +71,7 @@ docker compose pull && docker compose up -d
 服务将在 `http://localhost:8588` 启动。
 
 > 💡 Docker Hub 镜像：`mobufan/random-pic-api:latest`，包含全部 836 张壁纸，开箱即用。
+> 💡 `docker-compose.yml` 已将 `photos/` 目录映射出来，可直接在容器内运行 `python3 classify.py` 批量处理你自己的图片。
 
 #### 使用 Docker Hub 镜像直接运行（无需克隆仓库）
 
@@ -95,10 +96,12 @@ docker run -d \
   -e TZ=Asia/Shanghai \
   -v /path/to/your/landscape:/app/public/landscape \
   -v /path/to/your/portrait:/app/public/portrait \
+  -v /path/to/your/photos:/app/photos \
   mobufan/random-pic-api:latest
 ```
 
 > 💡 替换图片后需要重启容器以重新生成图片清单：`docker restart random-pic-api`
+> 💡 也可以在容器内运行 `python3 classify.py` 批量处理 `photos/` 目录中的原始图片（需先安装 Pillow）。
 
 #### 🛠️ 本地构建镜像
 
