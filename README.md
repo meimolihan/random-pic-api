@@ -14,11 +14,17 @@
 
 > 💡 直接在浏览器打开以上链接即可查看效果，每次刷新随机返回不同图片。
 
+- 横屏壁纸预览
+
 ![横屏壁纸](https://api.meimolihan.eu.org/pc)
+
+- 竖屏壁纸预览
 
 ![竖屏壁纸](https://api.meimolihan.eu.org/mobile)
 
-![自适应壁纸](https://api.meimolihan.eu.org)
+- 自适应预览
+
+![自适应](https://api.meimolihan.eu.org)
 
 ## 🌐 API 端点
 
