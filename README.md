@@ -72,6 +72,7 @@ docker compose pull && docker compose up -d
 
 > 💡 Docker Hub 镜像：`mobufan/random-pic-api:latest`，包含全部 836 张壁纸，开箱即用。
 > 💡 `docker-compose.yml` 已将 `photos/` 目录映射出来，可直接在容器内运行 `python3 classify.py` 批量处理你自己的图片。
+> ⚠️ 如果需要自定义对外访问地址，修改 `docker-compose.yml` 中的 `PUBLIC_HOST` 环境变量（默认为 `http://10.10.10.251:8588`）。
 
 #### 使用 Docker Hub 镜像直接运行（无需克隆仓库）
 
