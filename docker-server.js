@@ -1,7 +1,6 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const manifest = require('./api/_manifest');
 
 const PORT = process.env.PORT || 3000;
 
@@ -11,24 +10,41 @@ const MIME_TYPES = {
   '.jpeg': 'image/jpeg',
   '.png': 'image/png',
   '.gif': 'image/gif',
-  '.json': 'application/json',
-  '.html': 'text/html',
 };
 
-function detectMobile(ua) {
-  return /android|iphone|ipad|ipod|blackberry|windows phone/i.test(ua);
+const IMAGE_REGEX = /\.(webp|jpg|jpeg|png|gif)$/i;
+const LANDSCAPE_DIR = path.join(__dirname, 'public', 'landscape');
+const PORTRAIT_DIR = path.join(__dirname, 'public', 'portrait');
+
+/**
+ * 运行时动态扫描图片目录，返回文件列表
+ */
+function scanImages(dir) {
+  try {
+    if (!fs.existsSync(dir)) {
+      console.warn(`⚠️  目录不存在：${dir}`);
+      return [];
+    }
+    const files = fs.readdirSync(dir).filter(f => IMAGE_REGEX.test(f));
+    console.log(`📁 ${path.basename(dir)}: ${files.length} 张图片`);
+    return files;
+  } catch (err) {
+    console.error(`❌ 扫描失败 ${dir}: ${err.message}`);
+    return [];
+  }
 }
 
 function getRandomImage(type) {
-  const images = manifest[type];
-  if (!images || images.length === 0) return null;
+  const dir = type === 'landscape' ? LANDSCAPE_DIR : PORTRAIT_DIR;
+  const images = scanImages(dir);
+  if (images.length === 0) return null;
   return images[Math.floor(Math.random() * images.length)];
 }
 
 function serveImage(res, imagePath) {
   const fullPath = path.join(__dirname, 'public', imagePath);
   if (!fs.existsSync(fullPath)) {
-    res.writeHead(404);
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Not Found');
     return;
   }
@@ -44,6 +60,10 @@ function serveImage(res, imagePath) {
   fs.createReadStream(fullPath).pipe(res);
 }
 
+function detectMobile(ua) {
+  return /android|iphone|ipad|ipod|blackberry|windows phone/i.test(ua);
+}
+
 function handleApiRequest(req, res, type) {
   const image = getRandomImage(type);
   if (!image) {
@@ -52,28 +72,29 @@ function handleApiRequest(req, res, type) {
     return;
   }
 
-  const imageUrl = `/${type}/${image}`;
+  const imageUrl = `${type}/${image}`;
   const params = new URL(req.url, `http://${req.headers.host}`).searchParams;
 
   if (params.get('type') === 'json') {
+    const dir = type === 'landscape' ? LANDSCAPE_DIR : PORTRAIT_DIR;
+    const images = scanImages(dir);
     res.writeHead(200, {
       'Content-Type': 'application/json',
       'Cache-Control': 'no-cache, no-store, must-revalidate',
     });
-    res.end(JSON.stringify({ url: imageUrl, type, count: manifest[type].length }));
+    res.end(JSON.stringify({ url: imageUrl, type, count: images.length }));
     return;
   }
 
-  // Directly serve the image (no CDN redirect needed in Docker)
+  // 直接返回图片数据流
   serveImage(res, imageUrl);
 }
 
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
-  const pathname = url.pathname;
+  const pathname = url.pathname.replace(/\/$/, '');
 
-  // API routes
-  if (pathname === '/' || pathname === '/api/index') {
+  if (pathname === '' || pathname === '/api/index') {
     const type = detectMobile(req.headers['user-agent'] || '') ? 'portrait' : 'landscape';
     handleApiRequest(req, res, type);
   } else if (pathname === '/pc' || pathname === '/api/pc') {
@@ -81,16 +102,23 @@ const server = http.createServer((req, res) => {
   } else if (pathname === '/mobile' || pathname === '/api/mobile') {
     handleApiRequest(req, res, 'portrait');
   } else if (pathname.startsWith('/landscape/') || pathname.startsWith('/portrait/')) {
-    // Direct image access
     serveImage(res, pathname);
   } else {
-    res.writeHead(404);
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Not Found');
   }
 });
 
 server.listen(PORT, () => {
   console.log(`🚀 Random Pic API running on http://0.0.0.0:${PORT}`);
-  console.log(`   Landscape: ${manifest.landscape?.length || 0} images`);
-  console.log(`   Portrait:  ${manifest.portrait?.length || 0} images`);
+  scanImages(LANDSCAPE_DIR);
+  scanImages(PORTRAIT_DIR);
+  console.log('');
+  console.log('📡 端点：');
+  console.log('   /         — 自适应（自动识别手机/电脑）');
+  console.log('   /pc       — 随机横屏壁纸');
+  console.log('   /mobile   — 随机竖屏壁纸');
+  console.log('   ?type=json — 返回 JSON 格式');
+  console.log('');
+  console.log('💡 新增图片后只需重启容器即可生效：docker restart random-pic-api');
 });
