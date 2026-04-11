@@ -1,0 +1,11 @@
+{
+  "name": "random-pic-api",
+  "version": "2.0.0",
+  "description": "随机壁纸 API - Vercel Serverless 部署版",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "vercel-build": "node scripts/build.js"
+  },
+  "keywords": ["random", "wallpaper", "api", "vercel"],
+  "license": "MIT"
+}
