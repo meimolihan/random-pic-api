@@ -187,9 +187,10 @@ server {
 ├── public/
 │   ├── landscape/      # 横屏壁纸（418 张）
 │   └── portrait/       # 竖屏壁纸（418 张）
+├── photos/             # 原始图片目录（用于 classify.py 输入）
 ├── scripts/
 │   └── build.js        # 构建脚本（生成 manifest）
-├── docker-server.js    # Docker 部署用的 Node.js HTTP 服务器
+├── docker-server.js     # Docker 部署用的 Node.js HTTP 服务器
 ├── Dockerfile          # Docker 镜像构建文件
 ├── docker-compose.yml  # Docker Compose 配置
 ├── vercel.json         # Vercel 配置
@@ -216,16 +217,76 @@ server {
 
 ## 🖼️ 添加/替换图片
 
-1. 将新图片放入 `public/landscape/`（横屏）或 `public/portrait/`（竖屏）
-2. Vercel 部署：推送代码自动触发重新构建
-3. Docker 部署：重启容器 `docker restart random-pic-api`
+### 方式一：手动放置
 
-或使用本地分类脚本：
+直接将图片文件放入对应目录即可：
 
 ```bash
-# 将原始图片放入 photos/ 目录
+# 横屏壁纸
+public/landscape/my-photo-1.webp
+public/landscape/my-photo-2.jpg
+
+# 竖屏壁纸
+public/portrait/my-photo-3.png
+public/portrait/my-photo-4.webp
+```
+
+放置后重新部署即可生效（Vercel 自动重建，Docker 需重启容器）。
+
+### 方式二：使用 classify.py 自动分类
+
+`classify.py` 可以批量处理原始图片：自动识别横屏/竖屏、转换为 WebP 格式并保存到对应目录。
+
+#### 前提条件
+
+```bash
+# 需要 Python 3 和 Pillow 库
+pip install Pillow
+```
+
+#### 使用步骤
+
+**第一步：放入原始图片**
+
+将需要处理的原始图片（支持 `.jpg/.jpeg/.png/.webp`）放入 `photos/` 目录：
+
+```bash
+# 示例目录结构
+photos/
+├── 风景1.jpg
+├── 风景2.png
+├── 人像1.jpeg
+├── 人像2.webp
+└── 合影.jpg
+```
+
+**第二步：运行脚本**
+
+```bash
 python3 classify.py
 ```
+
+脚本会自动识别每张图片的方向，转换为 WebP 格式后放入对应目录：
+
+```
+========================================
+  Random Pic API — 图片分类工具
+========================================
+  输入目录：/path/to/project/photos
+  输出目录：/path/to/project/public/landscape
+            /path/to/project/public/portrait
+========================================
+
+找到 5 张图片，开始处理...
+
+✅ 处理完成！
+   横屏壁纸 → public/landscape/（2 张）
+   竖屏壁纸 → public/portrait/（3 张）
+```
+
+**第三步：使用处理后的图片**
+
+处理完成的图片会出现在 `public/landscape/`（横屏）和 `public/portrait/`（竖屏）目录中，可以直接用于 API 部署。
 
 ## 📄 使用示例
 
