@@ -60,46 +60,67 @@ vercel --prod
 #### 使用 Docker Compose（推荐）
 
 ```bash
-# 克隆项目
+# 克隆项目（如果还没有）
 git clone https://github.com/meimolihan/random-pic-api.git
 cd random-pic-api
 
-# 一键启动
-docker-compose up -d
+# 拉取最新镜像并启动
+docker compose pull && docker compose up -d
 ```
 
-服务将在 `http://localhost:3000` 启动。
+服务将在 `http://localhost:8588` 启动。
 
-#### 使用 Docker 命令
+> 💡 Docker Hub 镜像：`mobufan/random-pic-api:latest`，包含全部 836 张壁纸，开箱即用。
+
+#### 使用 Docker Hub 镜像直接运行（无需克隆仓库）
 
 ```bash
+docker run -d \
+  --name random-pic-api \
+  --restart always \
+  -p 8588:3000 \
+  -e TZ=Asia/Shanghai \
+  mobufan/random-pic-api:latest
+```
+
+#### 自定义壁纸图片
+
+挂载自己的图片目录即可替换内置壁纸：
+
+```bash
+docker run -d \
+  --name random-pic-api \
+  --restart always \
+  -p 8588:3000 \
+  -e TZ=Asia/Shanghai \
+  -v /path/to/your/landscape:/app/public/landscape \
+  -v /path/to/your/portrait:/app/public/portrait \
+  mobufan/random-pic-api:latest
+```
+
+> 💡 替换图片后需要重启容器以重新生成图片清单：`docker restart random-pic-api`
+
+#### 本地构建镜像
+
+如果想使用自己的图片集合，可以克隆仓库后本地构建：
+
+```bash
+git clone https://github.com/meimolihan/random-pic-api.git
+cd random-pic-api
+
+# 将图片放入 public/landscape/ 和 public/portrait/ 目录
+
 # 构建镜像
 docker build -t random-pic-api .
 
 # 运行容器
 docker run -d \
   --name random-pic-api \
-  --restart unless-stopped \
-  -p 3000:3000 \
+  --restart always \
+  -p 8588:3000 \
   -e TZ=Asia/Shanghai \
-  -v $(pwd)/public/landscape:/app/public/landscape \
-  -v $(pwd)/public/portrait:/app/public/portrait \
   random-pic-api
 ```
-
-#### 自定义壁纸图片
-
-挂载自己的图片目录即可替换壁纸：
-
-```bash
-docker run -d \
-  -p 3000:3000 \
-  -v /path/to/your/landscape:/app/public/landscape \
-  -v /path/to/your/portrait:/app/public/portrait \
-  random-pic-api
-```
-
-> 💡 替换图片后需要重启容器以重新生成图片清单：`docker restart random-pic-api`
 
 #### Nginx 反向代理
 
@@ -109,7 +130,7 @@ server {
     server_name api.example.com;
 
     location / {
-        proxy_pass http://127.0.0.1:3000;
+        proxy_pass http://127.0.0.1:8588;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
