@@ -1,11 +1,8 @@
-# Dependencies
+﻿# Dependencies
 node_modules/
 
-# Build output
+# Build output (generated at build time)
 api/_manifest.js
-
-# Original photos (not needed for deployment)
-photos/
 
 # OS files
 .DS_Store
@@ -15,5 +12,5 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Classified scripts (local use only)
+# Windows bat files
 *.bat
