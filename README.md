@@ -4,6 +4,16 @@
 
 根据设备类型自动返回横屏/竖屏壁纸，支持 WebP/JPG/PNG/GIF 格式。
 
+## 🖼️ 在线预览
+
+| 类型 | 地址 | 说明 |
+|------|------|------|
+| 横屏壁纸 | [https://api.meimolihan.eu.org/pc](https://api.meimolihan.eu.org/pc) | 随机返回一张横屏壁纸 |
+| 竖屏壁纸 | [https://api.meimolihan.eu.org/mobile](https://api.meimolihan.eu.org/mobile) | 随机返回一张竖屏壁纸 |
+| 自适应 | [https://api.meimolihan.eu.org](https://api.meimolihan.eu.org) | 自动识别设备类型返回对应壁纸 |
+
+> 💡 直接在浏览器打开以上链接即可查看效果，每次刷新随机返回不同图片。
+
 ## 🌐 API 端点
 
 | 端点 | 说明 |
