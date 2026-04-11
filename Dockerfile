@@ -2,19 +2,11 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy package.json first
-COPY package.json ./
-
-# Copy build script and public images
-COPY scripts/ ./scripts/
+# 复制应用代码和全部壁纸图片
 COPY public/ ./public/
-
-# Create api dir and run build to generate manifest
-RUN mkdir -p api && npm run build
-
-# Copy the rest of the application
 COPY api/ ./api/
 COPY docker-server.js ./
+COPY package.json ./
 
 EXPOSE 3000
 
