@@ -1,0 +1,13 @@
+services:
+  random-pic-api:
+    container_name: random-pic-api
+    build: .
+    restart: unless-stopped
+    volumes:
+      - ./public/landscape:/app/public/landscape   # 横屏图片目录
+      - ./public/portrait:/app/public/portrait     # 竖屏图片目录
+    ports:
+      - "3000:3000"
+    environment:
+      - TZ=Asia/Shanghai
+      - PORT=3000
