@@ -13,3 +13,4 @@ services:
     environment:
       - TZ=Asia/Shanghai
       - PORT=3000
+      - PUBLIC_HOST=http://10.10.10.251:8588
