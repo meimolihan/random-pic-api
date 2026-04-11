@@ -100,17 +100,39 @@ docker run -d \
 
 > 💡 替换图片后需要重启容器以重新生成图片清单：`docker restart random-pic-api`
 
-#### 本地构建镜像
+#### 🛠️ 本地构建镜像
 
 如果想使用自己的图片集合，可以克隆仓库后本地构建：
+
+**第一步：克隆项目**
 
 ```bash
 git clone https://github.com/meimolihan/random-pic-api.git
 cd random-pic-api
+```
 
-# 将图片放入 public/landscape/ 和 public/portrait/ 目录
+**第二步：准备壁纸图片**
 
-# 构建镜像
+将你的图片放入对应目录：
+
+```bash
+# 横屏壁纸（放入 public/landscape/）
+# 竖屏壁纸（放入 public/portrait/）
+# 支持 .webp、.jpg、.jpeg、.png、.gif 格式
+```
+
+也可以使用 `classify.py` 脚本自动分类原始图片：
+
+```bash
+# 将原始图片放入 photos/ 目录
+python3 classify.py
+# 脚本会自动识别图片方向并转换格式后放入对应目录
+```
+
+**第三步：构建并运行**
+
+```bash
+# 构建镜像（会自动扫描图片并生成清单）
 docker build -t random-pic-api .
 
 # 运行容器
@@ -121,6 +143,21 @@ docker run -d \
   -e TZ=Asia/Shanghai \
   random-pic-api
 ```
+
+**第四步：验证部署**
+
+```bash
+# 查看容器状态
+docker ps
+
+# 测试访问
+curl -I http://localhost:8588/pc
+
+# 查看日志
+docker logs random-pic-api
+```
+
+> 💡 重新构建镜像时如果图片有变化，需要重新 `docker build` 并 `docker-compose up -d --force-recreate`。
 
 #### Nginx 反向代理
 
