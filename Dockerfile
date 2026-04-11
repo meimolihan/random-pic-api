@@ -9,8 +9,8 @@ COPY package.json ./
 COPY scripts/ ./scripts/
 COPY public/ ./public/
 
-# Run build to generate manifest
-RUN npm run build
+# Create api dir and run build to generate manifest
+RUN mkdir -p api && npm run build
 
 # Copy the rest of the application
 COPY api/ ./api/
