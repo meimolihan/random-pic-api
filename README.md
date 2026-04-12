@@ -214,10 +214,9 @@ docker buildx build \
 | `-t`         | 镜像标签，可同时指定多个（:latest + 版本号）                 |
 
 > 💡 如果只想本地构建不推送，去掉 `--push`，改为加 `-o type=docker`：
-
-```bash
-docker buildx build --platform linux/amd64,linux/arm64 -t mobufan/random-pic-api:latest -o type=docker .
-```
+> ```bash
+> docker buildx build --platform linux/amd64,linux/arm64 -t mobufan/random-pic-api:latest -o type=docker .
+> ```
 
 **单独构建某一架构**
 
