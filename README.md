@@ -202,6 +202,7 @@ docker login -u mobufan
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
   -t mobufan/random-pic-api:latest \
+  -t mobufan/random-pic-api:2026.04.13 \
   --push \
   .
 ```
