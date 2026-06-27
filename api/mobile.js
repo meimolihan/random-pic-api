@@ -1,4 +1,21 @@
+const fs = require('fs');
+const path = require('path');
 const manifest = require('./_manifest');
+
+const MIME_TYPES = {
+  '.webp': 'image/webp',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.png': 'image/png',
+  '.gif': 'image/gif',
+};
+
+function serveImage(res, filePath) {
+  const ext = path.extname(filePath).toLowerCase();
+  res.setHeader('Content-Type', MIME_TYPES[ext] || 'application/octet-stream');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.status(200).send(fs.readFileSync(filePath));
+}
 
 module.exports = (req, res) => {
   const images = manifest.portrait;
@@ -9,19 +26,17 @@ module.exports = (req, res) => {
   }
 
   const randomImage = images[Math.floor(Math.random() * images.length)];
-  const imageUrl = `/portrait/${randomImage}`;
+  const filePath = path.join(__dirname, '..', 'public', 'portrait', randomImage);
 
   if (req.query && req.query.type === 'json') {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.status(200).json({
-      url: imageUrl,
+      url: `/portrait/${randomImage}`,
       type: 'portrait',
       count: images.length
     });
     return;
   }
 
-  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-  res.setHeader('Location', imageUrl);
-  res.status(302).end();
+  serveImage(res, filePath);
 };

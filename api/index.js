@@ -1,7 +1,23 @@
+const fs = require('fs');
+const path = require('path');
 const manifest = require('./_manifest');
 
+const MIME_TYPES = {
+  '.webp': 'image/webp',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.png': 'image/png',
+  '.gif': 'image/gif',
+};
+
+function serveImage(res, filePath) {
+  const ext = path.extname(filePath).toLowerCase();
+  res.setHeader('Content-Type', MIME_TYPES[ext] || 'application/octet-stream');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.status(200).send(fs.readFileSync(filePath));
+}
+
 module.exports = (req, res) => {
-  // 检测设备类型
   const ua = req.headers['user-agent'] || '';
   const isMobile = /android|iphone|ipad|ipod|blackberry|windows phone/i.test(ua);
   const type = isMobile ? 'portrait' : 'landscape';
@@ -13,21 +29,17 @@ module.exports = (req, res) => {
   }
 
   const randomImage = images[Math.floor(Math.random() * images.length)];
-  const imageUrl = `/${type}/${randomImage}`;
+  const filePath = path.join(__dirname, '..', 'public', type, randomImage);
 
-  // 支持 ?type=json 返回 JSON
   if (req.query && req.query.type === 'json') {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.status(200).json({
-      url: imageUrl,
-      type: type,
+      url: `/${type}/${randomImage}`,
+      type,
       count: images.length
     });
     return;
   }
 
-  // 302 重定向到静态图片（Vercel CDN 加速）
-  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-  res.setHeader('Location', imageUrl);
-  res.status(302).end();
+  serveImage(res, filePath);
 };
