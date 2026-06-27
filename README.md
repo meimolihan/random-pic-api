@@ -40,7 +40,7 @@
 
 ```bash
 # 直接获取随机图片
-curl -L https://your-domain.vercel.app/pc
+curl https://your-domain.vercel.app/pc
 
 # 获取 JSON 格式
 curl https://your-domain.vercel.app/pc?type=json
@@ -76,15 +76,40 @@ vercel --prod
 git clone https://github.com/meimolihan/random-pic-api.git
 cd random-pic-api
 
-# 拉取最新镜像并启动
+# 方式 A：拉取最新镜像并启动
 docker compose pull && docker compose up -d
+
+# 方式 B：本地构建镜像并启动（修改代码后需要此方式）
+docker compose build && docker compose up -d
 ```
 
 服务将在 `http://localhost:8588` 启动。
 
+**docker-compose.yml 配置说明：**
+
+```yaml
+services:
+  random-pic-api:
+    build: .
+    image: mobufan/random-pic-api:latest
+    container_name: random-pic-api
+    restart: always
+    volumes:
+      - ./public/landscape:/app/public/landscape   # 横屏壁纸目录
+      - ./public/portrait:/app/public/portrait     # 竖屏壁纸目录
+      - ./photos:/app/photos                       # 原始图片目录
+    ports:
+      - 8588:3000
+    environment:
+      - TZ=Asia/Shanghai
+      - PORT=3000
+      - PUBLIC_HOST=http://10.10.10.251:8588       # 对外访问地址（自定义）
+```
+
 > 💡 Docker Hub 镜像：`mobufan/random-pic-api:latest`，包含全部 836 张壁纸，开箱即用。
-> 💡 `docker-compose.yml` 已将 `photos/` 目录映射出来，可直接在容器内运行 `python3 classify.py` 批量处理你自己的图片。
-> ⚠️ 如果需要自定义对外访问地址，修改 `docker-compose.yml` 中的 `PUBLIC_HOST` 环境变量（默认为 `http://10.10.10.251:8588`）。
+> 💡 添加或替换图片后只需 `docker restart random-pic-api` 即可生效，**无需重新构建镜像**。
+> 💡 图片目录映射出来后可在宿主机直接管理图片文件，容器内外实时同步。
+> ⚠️ 修改 `docker-compose.yml` 后需要重新 `docker compose up -d` 使其生效。
 
 #### 使用 Docker Hub 镜像直接运行（无需克隆仓库）
 
@@ -318,14 +343,14 @@ server {
 
 1. **构建时**：`scripts/build.js` 扫描图片目录，生成 `api/_manifest.js`
 2. **请求时**：Serverless Function 从 manifest 中随机选择一张图片
-3. **响应**：返回 302 重定向到 CDN 上的静态图片地址
-4. **缓存策略**：重定向不缓存（每次随机），图片缓存 7 天
+3. **响应**：直接返回图片数据（无重定向），URL 保持不变
+4. **缓存策略**：全链路禁止缓存（`no-cache`），每次请求均返回新图片
 
 ### Docker 部署
 
 1. **启动时**：Node.js HTTP 服务器动态扫描 `public/` 目录下的所有图片
-2. **请求时**：每次请求随机从目录中选取一张图片
-3. **响应**：直接返回图片数据流
+2. **请求时**：每次请求随机从目录中选取一张图片，直接返回图片数据
+3. **响应**：直接返回图片数据流，地址栏 URL 保持不变
 4. **更新图片**：放入新图片后只需 `docker restart random-pic-api` 即可生效，**无需重新构建镜像**
 
 ## 🖼️ 添加/替换图片
