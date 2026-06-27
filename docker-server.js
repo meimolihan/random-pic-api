@@ -16,20 +16,15 @@ const IMAGE_REGEX = /\.(webp|jpg|jpeg|png|gif)$/i;
 const LANDSCAPE_DIR = path.join(__dirname, 'public', 'landscape');
 const PORTRAIT_DIR = path.join(__dirname, 'public', 'portrait');
 
-/**
- * 运行时动态扫描图片目录，返回文件列表
- */
 function scanImages(dir) {
   try {
     if (!fs.existsSync(dir)) {
-      console.warn(`⚠️  目录不存在：${dir}`);
+      console.warn(`Directory not found: ${dir}`);
       return [];
     }
-    const files = fs.readdirSync(dir).filter(f => IMAGE_REGEX.test(f));
-    console.log(`📁 ${path.basename(dir)}: ${files.length} 张图片`);
-    return files;
+    return fs.readdirSync(dir).filter(f => IMAGE_REGEX.test(f));
   } catch (err) {
-    console.error(`❌ 扫描失败 ${dir}: ${err.message}`);
+    console.error(`Scan failed ${dir}: ${err.message}`);
     return [];
   }
 }
@@ -54,8 +49,7 @@ function serveImage(res, imagePath) {
   res.writeHead(200, {
     'Content-Type': contentType,
     'Content-Length': stat.size,
-    'Cache-Control': 'public, max-age=604800',
-    'Content-Disposition': 'inline',
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
   });
   fs.createReadStream(fullPath).pipe(res);
 }
@@ -72,21 +66,17 @@ function handleApiRequest(req, res, type) {
     return;
   }
 
-  const imageUrl = `${type}/${image}`;
+  const imageUrl = `/${type}/${image}`;
   const params = new URL(req.url, `http://${req.headers.host}`).searchParams;
+  const noCache = { 'Cache-Control': 'no-cache, no-store, must-revalidate' };
 
   if (params.get('type') === 'json') {
-    const dir = type === 'landscape' ? LANDSCAPE_DIR : PORTRAIT_DIR;
-    const images = scanImages(dir);
-    res.writeHead(200, {
-      'Content-Type': 'application/json',
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-    });
+    const images = scanImages(type === 'landscape' ? LANDSCAPE_DIR : PORTRAIT_DIR);
+    res.writeHead(200, { 'Content-Type': 'application/json', ...noCache });
     res.end(JSON.stringify({ url: imageUrl, type, count: images.length }));
     return;
   }
 
-  // 直接返回图片数据流
   serveImage(res, imageUrl);
 }
 
@@ -110,17 +100,16 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-  // 支持通过环境变量配置对外访问地址
   const publicHost = process.env.PUBLIC_HOST || `http://0.0.0.0:${PORT}`;
-  console.log(`🚀 Random Pic API running on ${publicHost}`);
-  scanImages(LANDSCAPE_DIR);
-  scanImages(PORTRAIT_DIR);
+  console.log(`Random Pic API running on ${publicHost}`);
+  console.log(`Landscape: ${scanImages(LANDSCAPE_DIR).length} images`);
+  console.log(`Portrait: ${scanImages(PORTRAIT_DIR).length} images`);
   console.log('');
-  console.log('📡 端点：');
-  console.log(`   ${publicHost}/     — 自适应（自动识别手机/电脑）`);
-  console.log(`   ${publicHost}/pc   — 随机横屏壁纸`);
-  console.log(`   ${publicHost}/mobile — 随机竖屏壁纸`);
-  console.log('   ?type=json — 返回 JSON 格式');
+  console.log('Endpoints:');
+  console.log(`  ${publicHost}/       - Auto-detect (mobile/desktop)`);
+  console.log(`  ${publicHost}/pc     - Random landscape`);
+  console.log(`  ${publicHost}/mobile - Random portrait`);
+  console.log('  ?type=json   - JSON response');
   console.log('');
-  console.log('💡 新增图片后只需重启容器即可生效：docker restart random-pic-api');
+  console.log('Tip: docker restart random-pic-api after adding new images');
 });

@@ -1,5 +1,6 @@
 services:
   random-pic-api:
+    build: .
     image: mobufan/random-pic-api:latest
     container_name: random-pic-api
     network_mode: bridge
